@@ -101,8 +101,7 @@ fi
 #add a blank line after includes
 echo "" >> $class_file
 
-# Handle trailing slash - e.g. library/ and library
-cl_path=`echo $1 | sed -e ’s/\/$//’`
+cl_path=$1
 
 for file in $gfx; do
     #remove the last / that find adds to the base dir

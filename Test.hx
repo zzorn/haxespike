@@ -18,13 +18,12 @@ class Test {
 
         var x = 100;
         var y = 100;
-        
-        var bitmap: Bitmap = new Brown_tile();
+
+        var bitmap: Bitmap = new Brown_tile_png();
         var bd: BitmapData = bitmap.bitmapData;
 	mc.graphics.beginBitmapFill(bd);
         mc.graphics.drawRect(bd.rect.x, bd.rect.y, bd.rect.width, bd.rect.height);
         mc.graphics.endFill();
-
     }
 }
 
