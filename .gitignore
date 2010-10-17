@@ -1,4 +1,5 @@
 *.swf
 *~
 LibraryClasses.hx
+resources.xml
 
