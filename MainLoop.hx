@@ -17,17 +17,17 @@ class MainLoop extends Sprite
       // TODO: Load and initialize any needed data  
 
       // Start      
-      new MainLoop();
+      new MainLoop(800, 600);
    }
 
 
    var screen: BitmapData;
 
    // State for each key
-   var keyDown: Array<Bool> = [];
+   var keyDown: Array<Bool>;
 
    // Used to move monsters and the player, etc.  Independent from frame rate.
-   var logicUpdatesPerSecond: Float = 15;
+   var logicUpdatesPerSecond: Float;
 
    var lastUpdated: Float;
 
@@ -43,14 +43,17 @@ class MainLoop extends Sprite
       addChild(new Bitmap(screen));
 
       // Update key state
+      keyDown = [];
       stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown );
       stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp );
 
       // TODO: Mouse listening
 
+      logicUpdatesPerSecond = 15;
+
       // Call render frame on each flash frame
       stage.addEventListener(Event.ENTER_FRAME, onFrame);
-
+ 
       // Init update timestamp  
       lastUpdated = haxe.Timer.stamp();
    }
