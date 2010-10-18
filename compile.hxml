@@ -1,5 +1,5 @@
 -swf9 test.swf
 -swf-lib resources.swf
--main MainLoop
+-main Test
 -swf-header 800:600:40:553311
 -D network-sandbox

@@ -12,14 +12,6 @@ import flash.ui.Keyboard;
 // Extending Sprite to get double buffering, event and child object support.
 class MainLoop extends Sprite
 {
-   static public function main()
-   {
-      // TODO: Load and initialize any needed data  
-
-      // Start      
-      new MainLoop(800, 600);
-   }
-
 
    var screen: BitmapData;
 
