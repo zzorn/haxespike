@@ -1,3 +1,5 @@
+package haxespike;
+
 import flash.display.MovieClip;
 import LibraryClasses;
 import Blob;

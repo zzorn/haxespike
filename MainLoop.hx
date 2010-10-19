@@ -1,3 +1,5 @@
+package haxespike;
+
 import flash.display.Sprite;
 import flash.display.BitmapData;
 import flash.display.Bitmap;
