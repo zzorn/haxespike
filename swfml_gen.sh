@@ -3,6 +3,7 @@
 # Script to generate resource files and sources from images,
 # by Colin Lieberman, http://www.cactusflower.org/learning-flash-with-haxe
 # with corrections from Sergey.
+# Preliminary audio support and other modifications by zzorn.
 
 if [[ -z $1 ]]; then
     echo "first arg is path of resource dir"
@@ -12,10 +13,11 @@ fi
 #escape * so it doesn't try to sub with file names in local dir
 # Ignore hidden files
 gfx=`find $1 -name [^~.]\*.png -or -name \*.jpg`
+audio=`find $1 -name [^~.]\*.mp3`
 swfs=`find $1 -name [^~.]\*.swf`
 fonts=`find $1 -name [^~.]\*.ttf`
 
-if [[ -z $gfx && -z $fonts && -z $swfs ]]; then
+if [[ -z $gfx && -z $audio && -z $fonts && -z $swfs ]]; then
     echo "no matching files found in $1"
     exit 1
 fi
@@ -72,8 +74,12 @@ function write_class_file
     # $1 is Class name (id) and $2 is file type and $3 is file name
     if [[ $2 == "swf" ]]; then
         echo "class $1 extends MovieClip { public function new() { super(); } }" >> $3
+    else if [[ $2 == "audio" ]]; then
+        # TODO: What type are mp3s represented as?
+        echo "class $1 extends Audio { public function new() { super(); } }" >> $3
     else #bitmap files
         echo "class $1 extends Bitmap { public function new() { super(); } }" >> $3
+    fi    
     fi
 }
 
@@ -94,6 +100,11 @@ if [[ ! -z $gfx ]]; then
     echo "import flash.display.Bitmap;" >> $class_file
 fi
 
+if [[ ! -z $audio ]]; then
+    # TODO: Correct import
+    echo "import flash.Audio;" >> $class_file
+fi
+
 if [[ ! -z $swfs ]]; then
     echo "import flash.display.MovieClip;" >> $class_file
 fi
@@ -111,6 +122,14 @@ for file in $gfx; do
     echo -e "\t\t\t<bitmap id=\"$id\" import=\"$path\"/>"
 done
 
+for file in $audio; do
+    #remove the last / that find adds to the base dir
+    path=`clean_base_dir $cl_path $file`
+    id=`make_id $cl_path $file`
+    write_class_file $id "audio" $class_file
+    echo -e "\t\t\t<sound id=\"$id\" import=\"$path\"/>"
+done
+
 for swf in $swfs; do
     path=`clean_base_dir $cl_path $swf`
     id=`make_id $cl_path $file`
@@ -125,7 +144,7 @@ for font_file in $fonts; do
     id=`make_id $cl_path $font_file`
     #TODO: how do fonts go in the class file?
     #TODO: figure out if i need a more complete set of glyphs
-    echo -e "\t\t<font id=\"$id\" import=\"$path\" glyphs=\"abcdefghijklmnopqrstuvwxyz\"/>"
+    echo -e "\t\t<font id=\"$id\" import=\"$path\" glyphs=\"abcdefghijklmnopqrstuvwxyz1234567890 .,:;!?'<=>+-*/()[]{}%&$#@_~\"/>"
 done
 
 echo -e "\t</frame>"
