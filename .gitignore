@@ -1,5 +1,8 @@
 *.swf
 *~
+out/
+build/
+src/generated/
 LibraryClasses.hx
 resources.xml
 

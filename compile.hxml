@@ -1,4 +1,5 @@
 -swf9 build/test.swf
+-swf-version 10
 -swf-lib build/resources.swf
 -cp src
 -main haxespike.Test

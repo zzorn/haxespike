@@ -1,12 +1,13 @@
 package haxespike;
+import flash.display.BitmapData;
 
-interface Entity {
+interface Entity implements Component {
 
-    function init(host: Entity);
+    public function onMap(): Bool;
+    public function xPos(): Float;
+    public function yPos(): Float;
+    public function zPos(): Float;
 
-    function updateLogic(currentTimeMs: Long, timeDeltaS: Float);
-    
-    function render(screen: BitmapData);
     
 }
 

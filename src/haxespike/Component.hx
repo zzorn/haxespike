@@ -1,19 +1,10 @@
 package haxespike;
+import flash.display.BitmapData;
 
-class Component {
+interface Component {
 
-    private var components: Array<Component> = [];
-
-    public function updateLogic() {
-        for (c in components) {
-            c.updateLogic();
-        }
-    }
-
-    public function render(screen: BitmapData) {
-        for (c in components) {
-            c.render(screen);
-        }
-    } 
+    function updateLogic(time: Time): Void;
+    
+    function render(screen: BitmapData): Void;
 }
 

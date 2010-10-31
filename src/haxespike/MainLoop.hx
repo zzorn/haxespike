@@ -10,6 +10,8 @@ import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.ui.Keyboard;
 
+import generated.LibraryClasses;
+
 // Main lopp class.
 // Extending Sprite to get double buffering, event and child object support.
 class MainLoop extends Sprite
@@ -20,14 +22,19 @@ class MainLoop extends Sprite
    // State for each key
    var keyDown: Array<Bool>;
 
+   var components: Array<Component>;
+
    // Used to move monsters and the player, etc.  Independent from frame rate.
    var logicUpdatesPerSecond: Float;
 
-   var lastUpdated: Float;
+   var time: Time;
 
    public function new(screenW: Int, screenH: Int) {
+      trace("Test");
       // Call sprite constructor
       super();
+      
+      components = [];
       
       // Display ourselves
       flash.Lib.current.addChild(this);
@@ -35,6 +42,11 @@ class MainLoop extends Sprite
       // Create and show screen bitmap
       screen = new BitmapData(screenW, screenH);
       addChild(new Bitmap(screen));
+
+// DEBUG.  TODO: Install debug player.
+     var testTile: Bitmap = new Brown_tile_png();
+     var p: Picture = new Picture(testTile.bitmapData, 0, 0, 64, 80, 0, 0);
+     p.render(screen, 100, 100);
 
       // Update key state
       keyDown = [];
@@ -48,10 +60,18 @@ class MainLoop extends Sprite
       // Call render frame on each flash frame
       stage.addEventListener(Event.ENTER_FRAME, onFrame);
  
-      // Init update timestamp  
-      lastUpdated = haxe.Timer.stamp();
+      time = new Time();
+
    }
 
+   public function addComponent(component: Component) {
+   trace("added comp");
+      components.push(component);   
+   } 
+
+   public function removeComponent(component: Component) {
+      components.remove(component);
+   } 
 
    function onKeyDown(event:KeyboardEvent)
    {
@@ -68,13 +88,9 @@ class MainLoop extends Sprite
 
    function onFrame(e:flash.events.Event)
    {
-      var now = haxe.Timer.stamp();
+      time.update();
 
-      // Number of logic update steps
-      var steps = Math.floor( (now - lastUpdated) * logicUpdatesPerSecond );
-      lastUpdated += steps * 1 / logicUpdatesPerSecond;
-
-      for(i in 0...steps) updateLogic();
+      updateLogic();
 
       // Lock screen to do a more efficient batched bitmap update.
       screen.lock();
@@ -85,7 +101,9 @@ class MainLoop extends Sprite
    // Update the game logic one step.
    function updateLogic()
    {
-       // TODO: Update game logic 
+      for (c in components) {
+         c.updateLogic(time);
+      }
    }
 
    // Draw current view of game
@@ -93,11 +111,15 @@ class MainLoop extends Sprite
    {
       // Clear to bg color
       screen.fillRect(new Rectangle(0,0,screen.width, screen.height),0x000000);
-      // TODO: Maybe only draw updated parts of the screen?
 
-      // TODO: Draw map  
+     var testTile: Bitmap = new Brown_tile_png();
+     var p: Picture = new Picture(testTile.bitmapData, 0, 0, 64, 80, 0, 0);
+     p.render(screen, 10, 10);
 
-      // TODO: Update UI
+      // Draw things  
+      for (c in components) {
+         c.render(screen);
+      }
    }
 
 }

@@ -4,11 +4,20 @@
 # by Colin Lieberman, http://www.cactusflower.org/learning-flash-with-haxe
 # with corrections from Sergey.
 # Preliminary audio support and other modifications by zzorn.
+# LibraryIndex by zzorn.
 
 if [[ -z $1 ]]; then
     echo "first arg is path of resource dir"
     exit 1
 fi
+
+src_dir="src/generated"
+
+mkdir -p $src_dir
+
+class_file="$src_dir/LibraryClasses.hx"
+index_file="$src_dir/LibraryIndex.hx"
+
 
 #escape * so it doesn't try to sub with file names in local dir
 # Ignore hidden files
@@ -74,11 +83,13 @@ function write_class_file
     # $1 is Class name (id) and $2 is file type and $3 is file name
     if [[ $2 == "swf" ]]; then
         echo "class $1 extends MovieClip { public function new() { super(); } }" >> $3
+        echo "        movies.set(\"$1\", new $1());" >> $4
     else if [[ $2 == "audio" ]]; then
-        # TODO: What type are mp3s represented as?
-        echo "class $1 extends Audio { public function new() { super(); } }" >> $3
+        echo "class $1 extends Sound { public function new() { super(); } }" >> $3
+        echo "        sounds.set(\"$1\", new $1());" >> $4
     else #bitmap files
         echo "class $1 extends Bitmap { public function new() { super(); } }" >> $3
+        echo "        bitmaps.set(\"$1\", new $1());" >> $4
     fi    
     fi
 }
@@ -90,10 +101,16 @@ echo -e "\t<frame>"
 echo -e "\t\t<library>"
 
 #remove old class file
-class_file="LibraryClasses.hx"
 if [[ -f $class_file ]]; then
     rm $class_file
 fi
+if [[ -f $index_file ]]; then
+    rm $index_file
+fi
+
+# Pacakge declaration
+echo "package generated;" >> $class_file
+echo "package generated;" >> $index_file
 
 #put default info in class file
 if [[ ! -z $gfx ]]; then
@@ -101,16 +118,36 @@ if [[ ! -z $gfx ]]; then
 fi
 
 if [[ ! -z $audio ]]; then
-    # TODO: Correct import
-    echo "import flash.Audio;" >> $class_file
+    echo "import flash.media.Sound;" >> $class_file
 fi
 
 if [[ ! -z $swfs ]]; then
     echo "import flash.display.MovieClip;" >> $class_file
 fi
 
+echo "import flash.display.Bitmap;" >> $index_file
+echo "import flash.media.Sound;" >> $index_file
+echo "import flash.display.MovieClip;" >> $index_file
+echo "import LibraryClasses;" >> $index_file
+
 #add a blank line after includes
 echo "" >> $class_file
+echo "" >> $index_file
+
+# Index file structure
+echo "class LibraryIndex {" >> $index_file
+echo "    private var bitmaps: Hash<Bitmap>;" >> $index_file
+echo "    private var sounds: Hash<Sound>;" >> $index_file
+echo "    private var movies: Hash<MovieClip>;" >> $index_file
+echo "    public function bitmap(name: String): Bitmap { return bitmaps.get(name); }" >> $index_file
+echo "    public function sound(name: String): Sound { return sounds.get(name); }" >> $index_file
+echo "    public function movie(name: String): MovieClip { return movies.get(name); }" >> $index_file
+echo "    public function new() { " >> $index_file
+echo "        bitmaps = new Hash<Bitmap>();" >> $index_file
+echo "        sounds  = new Hash<Sound>();" >> $index_file
+echo "        movies  = new Hash<MovieClip>();" >> $index_file
+echo "        " >> $index_file
+
 
 cl_path=$1
 
@@ -118,7 +155,7 @@ for file in $gfx; do
     #remove the last / that find adds to the base dir
     path=`clean_base_dir $cl_path $file`
     id=`make_id $cl_path $file`
-    write_class_file $id "bmp" $class_file
+    write_class_file $id "bmp" $class_file $index_file
     echo -e "\t\t\t<bitmap id=\"$id\" import=\"$path\"/>"
 done
 
@@ -126,14 +163,14 @@ for file in $audio; do
     #remove the last / that find adds to the base dir
     path=`clean_base_dir $cl_path $file`
     id=`make_id $cl_path $file`
-    write_class_file $id "audio" $class_file
+    write_class_file $id "audio" $class_file $index_file
     echo -e "\t\t\t<sound id=\"$id\" import=\"$path\"/>"
 done
 
 for swf in $swfs; do
     path=`clean_base_dir $cl_path $swf`
     id=`make_id $cl_path $file`
-    write_class_file $id "swf" $class_file
+    write_class_file $id "swf" $class_file $index_file
     echo -e "\t\t\t<clip id=\"$id\" import=\"path\"/>"
 done
 
@@ -146,6 +183,9 @@ for font_file in $fonts; do
     #TODO: figure out if i need a more complete set of glyphs
     echo -e "\t\t<font id=\"$id\" import=\"$path\" glyphs=\"abcdefghijklmnopqrstuvwxyz1234567890 .,:;!?'<=>+-*/()[]{}%&$#@_~\"/>"
 done
+
+echo "    }" >> $index_file
+echo "}" >> $index_file
 
 echo -e "\t</frame>"
 echo "</movie>"

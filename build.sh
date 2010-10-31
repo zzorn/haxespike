@@ -13,6 +13,13 @@ cat build/resources.xml | swfmill simple stdin build/resources.swf
 echo "### Compiling"
 haxe compile.hxml
 
+echo "### Copying to output"
+mkdir -p out
+rm out/*.swf
+rm out/*.html
+cp src/*html out/
+cp build/test.swf out/
+
 echo "### Running test page"
-firefox src/test.html &
+firefox out/test.html &
 
