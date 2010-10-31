@@ -25,7 +25,7 @@ class MainLoop extends Sprite
 
    var lastUpdated: Float;
 
-   function new(screenW: Int, screenH: Int) {
+   public function new(screenW: Int, screenH: Int) {
       // Call sprite constructor
       super();
       

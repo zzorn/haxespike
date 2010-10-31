@@ -1,19 +1,13 @@
 package haxespike;
 
-class Entity {
+interface Entity {
 
-    private var components: Array<Component> = [];
+    function init(host: Entity);
 
-    function updateLogic() {
-        for (c in components) {
-            c.updateLogic();
-        }
-    }
-
-    function render(screen: BitmapData) {
-        for (c in components) {
-            c.render(screen);
-        }
-    } 
+    function updateLogic(currentTimeMs: Long, timeDeltaS: Float);
+    
+    function render(screen: BitmapData);
+    
 }
+
 

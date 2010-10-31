@@ -2,7 +2,7 @@ package haxespike;
 
 import flash.display.MovieClip;
 import LibraryClasses;
-import Blob;
+import haxespike.Picture;
 
 import flash.display.Bitmap;
 import flash.display.BitmapData;

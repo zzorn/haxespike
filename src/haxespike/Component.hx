@@ -1,12 +1,19 @@
 package haxespike;
 
-interface Component {
+class Component {
 
-    function init(host: Entity);
+    private var components: Array<Component> = [];
 
-    function updateLogic();
-    
-    function render(screen: BitmapData);
-    
+    public function updateLogic() {
+        for (c in components) {
+            c.updateLogic();
+        }
+    }
+
+    public function render(screen: BitmapData) {
+        for (c in components) {
+            c.render(screen);
+        }
+    } 
 }
 

@@ -7,13 +7,13 @@ class Map {
     private var tiles: Array<Tile> = [];
     private var things: Array<Thing> = [];
 
-    function updateLogic() {
+    public function updateLogic() {
         for (c in things) {
             c.updateLogic();
         }
     }
 
-    function render(screen: BitmapData) {
+    public function render(screen: BitmapData) {
         for (c in things) {
             c.render(screen);
         }

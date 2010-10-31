@@ -10,7 +10,7 @@ class Picture
 {
    var sheet: BitmapData;
    var area: Rectangle;
-   var location: Point = new Point(0, 0); // Cache point object
+   var location: Point;
    var hotSpotX: Int;
    var hotSpotY: Int;
  
@@ -20,6 +20,7 @@ class Picture
       area = new Rectangle(sourceX,sourceY,sourceW,sourceH);
       hotSpotX = sourceHotSpotX;
       hotSpotY = sourceHotSpotY;
+      location = new Point(0, 0); // Cache point object
    }
 
    public function render(target: BitmapData, x: Int, y: Int)
