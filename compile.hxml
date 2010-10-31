@@ -1,5 +1,6 @@
 -swf9 build/test.swf
 -swf-lib build/resources.swf
+-cp src
 -main haxespike.Test
 -swf-header 800:600:40:553311
 -D network-sandbox
